@@ -1,0 +1,8 @@
+{
+  "port": 80,
+  "endpoint_ports": [8000, 8001],
+  "session_secret": "REDDISH_SESSION_SECRET_GOES_HERE",
+  "proxy_key_salt": "REDDISH_PROXY_KEY_SALT_GOES_HERE",
+  "secure": false,
+  "redis_auth": false
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+
+  <meta charset='UTF-8'>
+  <meta name='keywords' content='redis, reddish, nosql, redis gui, redis admin, gui, visual, admin, cli, reddi.sh'>
+  <meta name='description' content='A better visual admin for redis.' />
+  <title>reddish, a redis visual admin</title>
+
+  <link href='/favicon.png' rel='shortcut icon'> 
+  <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono' rel='stylesheet'>
+  <link href='/styles/main.css' rel='stylesheet'>
+
+</head>
+<body>
+
+  <header class='header'>
+    <h1>
+      <a href='/'>
+        <img src='/images/logo-small.png' width='160' alt='reddish logo' title='reddish'>
+      </a>
+    </h1>
+
+    <div id='message'></div>
+
+    <aside id='connections'>
+      <h2><a href='#' id='connections-toggle'>Servers<span></span></a></h2>
+      <ul id='connections-list'>
+        <li>
+          <form action='/connections' id='connection-create' method='post'>
+            <fieldset>
+              <legend>Create Server Connection</legend>
+              <div class='input'><input type='text' class='text' name='name' id='connection-name' placeholder='redis://:password@127.0.0.1:6387'></div>
+              <div class='input'><label for='connection-pass'>password?</label><input type='checkbox' class='checkbox' id='connection-pass' name='requires_pass' id='connection-pass'></div>
+              <div class='actions'>
+                <input type='submit' class='submit button' value='Submit'>
+                <a href='https://github.com/FreeFlow/reddish-proxy' target='_blank'>reddish-proxy</a>
+              </div>
+            </fieldset>
+          </form>
+        </li>
+      </ul>
+    </aside>
+
+  </header>
+
+  <section class='panels'>
+    <section class='panel' id='keys'>
+      <form id='keys-filter' method='post'>
+        <div class='input prefixed'>
+          <input type='text' class='text search' placeholder='*' value='*' id='keys-filter-input'>
+          <span class='prefix'>KEYS</span>
+        </div>
+      </form>
+      <div id='keys-list-wrapper' class='list-wrapper'>
+        <ul id='keys-list' class='list'></ul>
+      </div>
+      <p class='empty' id='keys-empty'>There are no keys to display.</p>
+    </section>
+
+    <section class='panel' id='values'>
+      <div id='values-list-wrapper' class='list-wrapper'>
+        <ul id='values-list' class='list'></ul>
+      </div>
+      <div class='empty' id='values-empty'></div>
+    </section>
+  </section>
+
+  <div id='cli'>
+    <ul class='tags'>
+      <li>
+        <div class='value'>
+          <input type='text' class='text' placeholder='>'>
+        </div>
+        <div class='label'>command</div>
+      </li>
+    </ul>
+    <div class='tip'></div>
+  </div>
+
+  <footer class='footer'>
+    <nav>
+      <ul>
+        <li><a href='#tour'>tour</a></li>
+        <li><a href='http://glyphish.com' target='_blank'>icons</a></li>
+      </ul>
+    </nav>
+    <p class='created-by'>Created by <a href='http://freeflow.io' target='_blank'>FreeFlow Labs</a>, LLC</p>
+  </footer>
+
+  <div id='overlay' class='overlay'></div>
+  <aside id='tour' class='tour'></aside>
+
+
+  <!-- TEMPLATES -->
+
+  <script type='text/template' id='connection-template'>
+    <div class='details'>
+      <span class='name'><%= name %></span>
+      <% if (key) { %>
+        <span class='key'><%= key %></span>
+      <% } %>
+    </div>
+    <div class='actions'>
+      <% if (requires_pass) { %>
+        <input type='password' placeholder='password' class='text password'>
+      <% } %>
+      <a href='#' class='connect button'>Connect</a>
+      <a href='#' class='remove'>Remove</a>
+    </div>
+  </script>
+
+  <script type='text/template' id='tag-template'>
+    <li class='<%= label %>'>
+      <div class='value'>
+        <% if (label === 'command') { %>
+          <a href='http://redis.io/commands/<%= value.toLowerCase() %>' target='_blank'><%= value %></a>
+        <% } else { %>
+          <%= value %>      
+        <% } %>
+      </div>
+      <div class='label'>
+        <% if (optional) { %>
+          (<%= label %>)
+        <% } else { %>
+          <%= label %>      
+        <% } %>
+      </div>
+    </li>
+  </script>
+
+  <script type='text/template' id='key-template'>
+    <a href='#' title='<%= val_cmd_str %>' class='open'>
+      <span class='name'><%= id %></span>
+      <span class='type'><%= type %></span>
+      <span class='ttl'>
+        <% if (ttl > 0) { %>
+          <%= Reddish.utils.relativeTime(Date.now() + (ttl * 1000)) %>
+        <% } %>
+      </span>
+    </a>
+    <% if (typeof del_cmd_name !== 'undefined' && del_cmd_name !== null) { %>
+      <a href='#' title='<%= del_cmd_str %>' class='del'>[<%= del_cmd_name %>]</a>
+    <% } %>
+  </script>
+
+  <script type='text/template' id='value-template'>
+    <% if (typeof field !== 'undefined' && field !== null) { %>
+      <span class='field'><%= field %></span>
+    <% } %>
+    <pre><%= value %></pre>
+    <% if (typeof edit_cmd_name !== 'undefined' && edit_cmd_name !== null) { %>
+      <a href='#' title='<%= edit_cmd_str %>' class='edit-toggle'>[<%= edit_cmd_name %>]</a>
+      <form method='post' class='edit-view'>
+        <textarea class='edit-value'></textarea>
+        <input type='submit' value='Save' class='edit-save'>
+        <a href='#' class='edit-cancel'>Cancel</a>
+      </form>
+    <% } %>
+    <% if (typeof del_cmd_name !== 'undefined' && del_cmd_name !== null) { %>
+      <a href='#' title='<%= del_cmd_str %>' class='del'>[<%= del_cmd_name %>]</a>
+    <% } %>
+  </script>
+
+  <script type='text/template' id='message-template'>
+    <span class='message <%= type %>'><%= message %></span>
+  </script>
+
+  <script type='text/template' id='tour-template'>
+    <p class='message'>(<%= index %>/<%= length %>) <%= message %></p>
+    <div class='actions'>
+      <a href='#' class='button next' id='tour-next'>Next</a>
+      <a href='#' class='cancel' id='tour-cancel'>cancel</a>
+    </div>
+  </script>
+
+
+  <!-- SCRIPTS -->
+
+  <script src='/socket.io/socket.io.js'></script>
+
+  <script src='/scripts/deps/jquery.js'></script>
+  <script src='/scripts/deps/underscore.js'></script>
+  <script src='/scripts/deps/backbone.js'></script>
+  <script src='/scripts/deps/commands.js'></script>
+
+  <script src='/scripts/models/connections.js'></script>
+  <script src='/scripts/models/keys.js'></script>
+  <script src='/scripts/models/messages.js'></script>
+  <script src='/scripts/models/tour.js'></script>
+  <script src='/scripts/models/vals.js'></script>
+
+  <script src='/scripts/views/cli.js'></script>
+  <script src='/scripts/views/connection.js'></script>
+  <script src='/scripts/views/connections.js'></script>
+  <script src='/scripts/views/key.js'></script>
+  <script src='/scripts/views/keys.js'></script>
+  <script src='/scripts/views/message.js'></script>
+  <script src='/scripts/views/tour.js'></script>
+  <script src='/scripts/views/val.js'></script>
+  <script src='/scripts/views/vals.js'></script>
+
+  <script src='/scripts/router.js'></script>
+  <script src='/scripts/utils.js'></script>
+  <script src='/scripts/main.js'></script>
+  <script src='/scripts/init.js'></script>
+
+</body>
+</html>

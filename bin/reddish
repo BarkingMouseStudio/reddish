@@ -1,0 +1,4 @@
+#!/usr/bin/env coffee
+
+process.title = 'reddish'
+require '../app'
