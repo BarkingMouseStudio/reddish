@@ -1,4 +1,4 @@
-#!/usr/bin/env coffee
+#!/usr/bin/env node
 
-process.title = 'reddish'
-require '../app'
+process.title = 'reddish';
+require('../app');
