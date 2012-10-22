@@ -1,6 +1,259 @@
-@import 'src/styles/mixins'; 
-@import 'src/styles/variables'; 
-@import 'src/styles/global'; 
+$yellow = #ecd078;
+$bluegreen = #53777a;
+$teal = #8dB9bd;
+$red = #c02942;
+
+$green-accent = #53777a;
+$heading-font = Oswald;
+$monospace-font = 'Droid Sans Mono';
+$border-color = #c7ccca;
+
+
+$box_shadow($x=3px, $y=3px, $radius=3px, $color=#888) {
+  -moz-box-shadow: $x $y $radius $color;
+  -webkit-box-shadow: $x $y $radius $color;
+  box-shadow: $x $y $radius $color;
+}
+
+$opacity($opacity=1) {
+  -moz-opacity: $opacity;
+  -khtml-opacity: $opacity;
+  opacity: $opacity;
+}
+
+$gradient($from=#000, $to=#eee) {
+  background: $from;
+  background-image: -moz-linear-gradient(top, $from, $to);
+  background-image: -webkit-gradient(linear, left top, left bottom, from($from), to($to));
+}
+
+$transition($range=all, $time=1s, $ease=ease-in-out) {
+  -moz-transition: $range $time $ease;
+  -webkit-transition: $range $time $ease;
+  -o-transition: $range $time $ease;
+  transition: $range $time $ease;
+}
+
+$animation($name, $duration=1s, $iteration-count=infinite, $timing-function=ease-in-out, $direction=normal){
+  -moz-animation-name: $name;
+	-moz-animation-duration: $duration;
+	-moz-animation-iteration-count: $iteration-count;
+	-moz-animation-timing-function: $timing-function;
+  -moz-animation-direction: $direction;
+
+	-webkit-animation-name: $name;
+	-webkit-animation-duration: $duration;
+	-webkit-animation-iteration-count: $iteration-count;
+	-webkit-animation-timing-function: $timing-function;
+  -webkit-animation-direction: $direction;
+
+	-ms-animation-name: $name;
+	-ms-animation-duration: $duration;
+	-ms-animation-iteration-count: $iteration-count;
+	-ms-animation-timing-function: $timing-function;
+  -ms-animation-direction: $direction;
+
+	-o-animation-name: $name;
+	-o-animation-duration: $duration;
+	-o-animation-iteration-count: $iteration-count;
+	-o-animation-timing-function: $timing-function;
+  -o-animation-direction: $direction;
+
+	animation-name: $name;
+	animation-duration: $duration;
+	animation-iteration-count: $iteration-count;
+	animation-timing-function: $timing-function;
+  animation-direction: $direction;
+}
+
+
+// Arrows
+
+$arrow {
+  &:after {
+    content: ' ';
+    position: absolute;
+    height: 0;
+    width: 0;
+    border: 10px solid transparent;
+  }
+}
+
+$arrow-right {
+  $extend $arrow;
+
+  &:after {
+    top: 10px;
+    right: -20px;
+    border-left-color: #fff;
+  }
+}
+
+$arrow-left {
+  $extend $arrow;
+
+  &:after {
+    top: 10px;
+    left: -20px;
+    border-right-color: #fff;
+  }
+}
+
+$arrow-top {
+  $extend $arrow;
+
+  &:after {
+    left: 10px;
+    top: -20px;
+    border-bottom-color: #fff;
+  }
+}
+
+$arrow-bottom {
+  $extend $arrow;
+
+  &:after {
+    left: 10px;
+    bottom: -20px;
+    border-top-color: #fff;
+  }
+}
+
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { 
+  display: block;
+}
+
+body {
+  margin: 0;
+  padding: 0 0 80px;
+  font-family: 'Droid Sans','Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #6a6a6a;
+  background: url(../images/grain-dark.png);
+
+  a img {
+    border: none;
+  }
+
+  fieldset { 
+    border: none; 
+    margin: 0; 
+    padding: 0; 
+
+    legend {
+      font-weight: bold;
+      text-transform: uppercase;
+      color: $green-accent;
+      font-size: 12px;
+      padding: 0 0 10px;
+      margin: 0;
+      text-shadow: 0 1px 0 white;
+    }
+  }
+
+  a, input.submit {
+    color: $green-accent;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  input.text,
+  input.search {
+    border: 1px solid #ccc;
+    margin: 0;
+    padding: 4px;
+    border-radius: 2px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:focus {
+      outline: none;
+      border: 1px solid #a68;
+    }
+  }
+
+  .button, input.submit {
+    font-size: 10px;
+    color: $bluegreen;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: inline-block;
+    border: 1px solid #dedede;
+    padding: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Droid Sans','Helvetica Neue', Helvetica, Arial, sans-serif;
+    box-shadow: inset 0 1px 0px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(255, 255, 255, 0.25);
+    $gradient(#f6f6f6, #e3e3e3);
+   
+    &:hover {
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.25);
+      $gradient(#efefef, #f6f6f6);
+    }      
+
+    &:active {
+      $gradient(#eee, #ddd);
+    }
+  }
+  
+  .footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 6px 20px 5px;
+    font-size: 12px;
+    overflow: hidden;
+    color: #999;
+    font-size: 10px;
+    z-index: 1;
+    text-align: center;
+
+    a {
+      color: #888;
+      text-decoration: none;
+      text-transform: uppercase;
+      font-weight: bold;
+      
+      &:hover {
+        color: $bluegreen;
+        text-decoration: underline;
+      }
+    } 
+
+    nav {
+      display: inline-block;
+      overflow: hidden;      
+    }
+
+    ul {
+      overflow: hidden;
+      float: left;
+
+      li {
+        float: left;
+        margin: 0 10px 0 0;      
+
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+
+    p.created-by {
+      margin: 0;
+      position: absolute;
+      right: 21px;
+      top: 6px;
+    }
+  }
+}
 
 header {
   border-bottom: 1px solid #eaeaea;

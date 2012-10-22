@@ -7,15 +7,6 @@ $arrow-top{$extend:$arrow;}
 $arrow-top:after{left:10px;top:-20px;border-bottom-color:#fff}
 $arrow-bottom{$extend:$arrow;}
 $arrow-bottom:after{left:10px;bottom:-20px;border-top-color:#fff}
-$arrow:after{content:' ';position:absolute;height:0;width:0;border:10px solid transparent}
-$arrow-right{$extend:$arrow;}
-$arrow-right:after{top:10px;right:-20px;border-left-color:#fff}
-$arrow-left{$extend:$arrow;}
-$arrow-left:after{top:10px;left:-20px;border-right-color:#fff}
-$arrow-top{$extend:$arrow;}
-$arrow-top:after{left:10px;top:-20px;border-bottom-color:#fff}
-$arrow-bottom{$extend:$arrow;}
-$arrow-bottom:after{left:10px;bottom:-20px;border-top-color:#fff}
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
 body{margin:0;padding:0 0 80px;font-family:'Droid Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;color:#6a6a6a;background:url("../images/grain-dark.png");}
 body a img{border:none}

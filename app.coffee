@@ -17,10 +17,8 @@ certs = require './certs' if secure
 
 app = if secure then express.createServer(certs) else express.createServer()
 app.configure ->
-  cwd = process.cwd()
-
-  public_path = path.join(cwd, 'public')
-  src_path = path.join(cwd, 'src')
+  public_path = path.join(__dirname, 'public')
+  src_path = path.join(__dirname, 'src')
 
   @use stylus.middleware({
     debug: true,
@@ -64,7 +62,7 @@ app.post '/connections', connections_post
 app.del '/connections/:id', connections_del
 
 app.listen(port)
-console.log "app:listening:#{port}"
+console.log "Running at http://localhost:#{port}"
 
 
 # Initialize socket.io
