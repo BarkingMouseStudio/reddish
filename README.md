@@ -7,6 +7,9 @@ and monitor your redis instances.
 Check out the hosted service at http://reddi.sh or
 https://reddish.herokuapp.com (for SSL)
 
+[Project page](http://freeflow.github.com/reddish)
+
+[Docco docs](http://freeflow.github.com/reddish/docs/main.html)
 
 Proxying
 --------
