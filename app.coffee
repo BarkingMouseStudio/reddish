@@ -15,7 +15,7 @@ certs = require './certs' if secure
 
 # Initialize express app
 
-app = express.createServer(certs)
+app = if secure then express.createServer(certs) else express.createServer()
 app.configure ->
   cwd = process.cwd()
 

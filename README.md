@@ -61,6 +61,7 @@ Options you can modify in the `config.json` file installed with reddish:
               }
               ```
 
+
               Default: `false`
 
   * `redis_auth`: Password to use when connecting to the local redis instance.
