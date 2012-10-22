@@ -11,14 +11,6 @@ https://reddish.herokuapp.com (for SSL)
 
 [Docco docs](http://freeflow.github.com/reddish/docs/main.html)
 
-Proxying
---------
-
-Reddish supports connecting to local redis instances via a proxy that
-can connect to any publically accessible reddish server and proxy commands.
-
-See: https://github.com/FreeFlow/reddish-proxy
-
 
 Install
 -------
@@ -40,7 +32,8 @@ Options you can modify in the `config.json` file installed with reddish:
 
   * `port`: The port to serve the webapp from. Default: `3000`
 
-  * `endpoint_ports`: Default: `[8000, 8001]`
+  * `endpoint_ports`: Two ports for reddish-proxy to connect to.
+                      Default: `[8000, 8001]`
 
   * `session_secret`: Secret used to create session keys.
                       Default: `REDDISH_SESSION_SECRET_GOES_HERE`
@@ -67,6 +60,15 @@ Options you can modify in the `config.json` file installed with reddish:
 
   * `redis_auth`: Password to use when connecting to the local redis instance.
                   Default: `false`
+
+
+Proxying
+--------
+
+Reddish supports connecting to local redis instances via a proxy that
+can connect to any publically accessible reddish server and proxy commands.
+
+See: https://github.com/FreeFlow/reddish-proxy
 
 
 Contributing
