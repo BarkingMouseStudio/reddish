@@ -28,7 +28,7 @@ body .footer ul li{float:left;margin:0 10px 0 0;}
 body .footer ul li:last-child{margin:0}
 body .footer p.created-by{margin:0;position:absolute;right:21px;top:6px}
 header{border-bottom:1px solid #eaeaea;position:relative;height:48px;background:#fefefe;background-image:-moz-linear-gradient(top,#fefefe,#f6f6f6);background-image:-webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f6f6f6));}
-header h1{margin:12px 0 0 20px;padding:0;display:block;float:left}
+header h1{margin:7px 0 0 20px;padding:0;display:block;float:left}
 header #connections{float:right;overflow:hidden;position:relative;border-left:1px solid #eee;z-index:2;}
 header #connections h2{margin:0;padding:0;}
 header #connections h2 a#connections-toggle{margin:0;display:block;text-decoration:none;text-transform:uppercase;font-size:12px;line-height:48px;width:280px;padding:0 20px;text-shadow:0 1px 0 #fff;background:#f6f6f6;background-image:-moz-linear-gradient(top,#f6f6f6,#e3e3e3);background-image:-webkit-gradient(linear,left top,left bottom,from(#f6f6f6),to(#e3e3e3));}
