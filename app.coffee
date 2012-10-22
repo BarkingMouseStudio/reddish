@@ -10,10 +10,12 @@ RedisStore = require('connect-redis')(express)
 { session_secret, port, endpoint_ports, secure } = require './lib/config'
 { md5 } = require './lib/utils'
 
+certs = require './certs' if secure
+
 
 # Initialize express app
 
-app = express.createServer()
+app = express.createServer(certs)
 app.configure ->
   cwd = process.cwd()
 
@@ -92,7 +94,7 @@ Endpoint = require './lib/Endpoint'
 [standard_endpoint_port, monitor_endpoint_port] = endpoint_ports
 
 if secure
-  { key, cert, ca } = require '../certs'
+  { key, cert, ca } = certs
   options = key: key, cert: cert, ca: [ca]
 else
   options = allowHalfOpen: true
