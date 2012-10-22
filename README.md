@@ -53,14 +53,14 @@ Options you can modify in the `config.json` file installed with reddish:
               folder should contain an `index.js` that exports the loaded
               certificate files that Express2 expects:
 
-              // index.js
-              var fs = require('fs');
+        // index.js
+        var fs = require('fs');
 
-              module.exports = {
-                key: fs.readFileSync(__dirname + '/certificate.key').toString(),
-                cert: fs.readFileSync(__dirname + '/certificate.cert').toString(),
-                ca: fs.readFileSync(__dirname + '/certificate.ca').toString()
-              }
+        module.exports = {
+          key: fs.readFileSync(__dirname + '/certificate.key').toString(),
+          cert: fs.readFileSync(__dirname + '/certificate.cert').toString(),
+          ca: fs.readFileSync(__dirname + '/certificate.ca').toString()
+        }
 
 
     Default: `false`
