@@ -1,0 +1,119 @@
+<!DOCTYPE html>  <html> <head>   <title>key.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="../docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">  
+<a class="source" href="../main.html">main.coffee</a>
+<a class="source" href="../init.html">init.coffee</a>
+<a class="source" href="../router.html">router.coffee</a>
+<a class="source" href="../utils.html">utils.coffee</a>  
+<a class="source" href="../models/connections.html">models/connections.coffee</a>
+<a class="source" href="../models/keys.html">models/keys.coffee</a>
+<a class="source" href="../models/messages.html">models/messages.coffee</a>
+<a class="source" href="../models/tour.html">models/tour.coffee</a>
+<a class="source" href="../models/vals.html">models/vals.coffee</a>
+<a class="source" href="cli.html">views/cli.coffee</a>
+<a class="source" href="connection.html">views/connection.coffee</a>
+<a class="source" href="connections.html">views/connections.coffee</a>
+<a class="source" href="key.html">views/key.coffee</a>
+<a class="source" href="keys.html">views/keys.coffee</a>
+<a class="source" href="message.html">views/message.coffee</a>
+<a class="source" href="tour.html">views/tour.coffee</a>
+<a class="source" href="val.html">views/val.coffee</a>
+<a class="source" href="vals.html">views/vals.coffee</a>    
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               key.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.KeyView = </span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;click a.open&#39;</span><span class="o">:</span> <span class="s">&#39;open&#39;</span>
+    <span class="s">&#39;click a.del&#39;</span><span class="o">:</span> <span class="s">&#39;del&#39;</span>
+
+  <span class="nv">tagName: </span><span class="s">&#39;li&#39;</span>
+
+  <span class="nv">template: </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#key-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+
+  <span class="nv">initialize: </span><span class="o">-&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&#39;render&#39;</span><span class="p">)</span>
+
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;change:ttl&#39;</span><span class="p">,</span> <span class="nx">@render_ttl</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;change:deleted&#39;</span><span class="p">,</span> <span class="nx">@render_deleted</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;change:active&#39;</span><span class="p">,</span> <span class="nx">@render_active</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;remove&#39;</span><span class="p">,</span> <span class="nx">@close</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+
+    <span class="vi">@$el = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@el</span><span class="p">)</span>
+
+  <span class="nv">open: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">opened: </span><span class="kc">true</span><span class="p">)</span>
+
+    <span class="p">{</span> <span class="nv">val_cmd_name: </span><span class="nx">command</span><span class="p">,</span> <span class="nv">val_cmd_args: </span><span class="nx">args</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span>
+
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:command&#39;</span><span class="p">,</span> <span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">err</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+      <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">reply</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;info&#39;</span><span class="p">)</span>
+
+  <span class="nv">del: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+
+    <span class="p">{</span> <span class="nv">del_cmd_name: </span><span class="nx">command</span><span class="p">,</span> <span class="nv">del_cmd_args: </span><span class="nx">args</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span>
+
+    <span class="k">return</span> <span class="nx">unless</span> <span class="nx">confirm</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">      Are you sure you want to delete this key?</span>
+<span class="s">      `</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;del_cmd_str&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">`</span>
+<span class="s">      &quot;&quot;&quot;</span>
+
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:command&#39;</span><span class="p">,</span> <span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">err</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+      <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">reply</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;info&#39;</span><span class="p">)</span>
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">deleted: </span><span class="kc">true</span><span class="p">)</span> <span class="k">if</span> <span class="nx">reply</span>
+
+  <span class="nv">render_active: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nv">active = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
+
+  <span class="nv">render_deleted: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nv">deleted = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;deleted&#39;</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;deleted&#39;</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;deleted&#39;</span><span class="p">)</span>
+
+  <span class="nv">render_ttl: </span><span class="o">-&gt;</span>
+    <span class="nv">ttl = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;ttl&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">ttl</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="nv">time = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">utils</span><span class="p">.</span><span class="nx">relativeTime</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="nx">ttl</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
+      <span class="nx">@$ttl</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span>
+      <span class="nx">@update_ttl</span><span class="p">()</span>
+
+  <span class="nv">update_ttl: </span><span class="o">-&gt;</span>
+    <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">@timeout</span><span class="p">)</span>
+    <span class="nv">ttl = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;ttl&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">ttl</span> <span class="o">is</span> <span class="mi">0</span>
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">deleted: </span><span class="kc">true</span><span class="p">)</span>
+      <span class="k">return</span>
+
+    <span class="k">if</span> <span class="nx">ttl</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="vi">@timeout = </span><span class="nx">setTimeout</span> <span class="o">=&gt;</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">ttl: </span><span class="o">--</span><span class="nx">ttl</span><span class="p">)</span>
+      <span class="p">,</span> <span class="mi">1000</span>
+
+  <span class="nv">close: </span><span class="o">-&gt;</span>
+    <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">@timeout</span><span class="p">)</span>
+    <span class="nx">@remove</span><span class="p">()</span>
+    <span class="nx">@unbind</span><span class="p">()</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">unbind</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="vi">@el.innerHTML = </span><span class="nx">@template</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">())</span>
+    <span class="vi">@$ttl = </span><span class="nx">@$</span><span class="p">(</span><span class="s">&#39;.ttl&#39;</span><span class="p">)</span>
+    <span class="nx">@update_ttl</span><span class="p">()</span>
+    <span class="k">return</span> <span class="k">this</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

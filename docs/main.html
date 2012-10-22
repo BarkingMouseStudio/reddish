@@ -1,0 +1,100 @@
+<!DOCTYPE html>  <html> <head>   <title>main.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">
+<a class="source" href="main.html">main.coffee</a>
+<a class="source" href="init.html">init.coffee</a>
+<a class="source" href="router.html">router.coffee</a>
+<a class="source" href="utils.html">utils.coffee</a>
+<a class="source" href="models/connections.html">models/connections.coffee</a>
+<a class="source" href="models/keys.html">models/keys.coffee</a>
+<a class="source" href="models/messages.html">models/messages.coffee</a>
+<a class="source" href="models/tour.html">models/tour.coffee</a>
+<a class="source" href="models/vals.html">models/vals.coffee</a>
+<a class="source" href="views/cli.html">views/cli.coffee</a>
+<a class="source" href="views/connection.html">views/connection.coffee</a>
+<a class="source" href="views/connections.html">views/connections.coffee</a>
+<a class="source" href="views/key.html">views/key.coffee</a>
+<a class="source" href="views/keys.html">views/keys.coffee</a>
+<a class="source" href="views/message.html">views/message.coffee</a>
+<a class="source" href="views/tour.html">views/tour.coffee</a>
+<a class="source" href="views/val.html">views/val.coffee</a>
+<a class="source" href="views/vals.html">views/vals.coffee</a>  
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               main.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.socket = </span><span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">()</span>
+
+<span class="nv">Reddish.Collections =</span>
+  <span class="nv">connections: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">ConnectionsCollection</span><span class="p">()</span>
+  <span class="nv">keys: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">KeysCollection</span><span class="p">()</span>
+  <span class="nv">vals: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">ValuesCollection</span><span class="p">()</span>
+  <span class="nv">messages: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">MessagesCollection</span><span class="p">()</span>
+  <span class="nv">tour: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">TourCollection</span><span class="p">()</span>
+
+<span class="nv">Reddish.Views =</span>
+  <span class="nv">cli: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">CLIView</span><span class="p">()</span>
+  <span class="nv">connections: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">ConnectionsView</span><span class="p">(</span><span class="nv">collection: </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">connections</span><span class="p">)</span>
+  <span class="nv">keys: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">KeysView</span><span class="p">(</span><span class="nv">collection: </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">)</span>
+  <span class="nv">vals: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">ValuesView</span><span class="p">(</span><span class="nv">collection: </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">)</span>
+  <span class="nv">message: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">MessageView</span><span class="p">(</span><span class="nv">collection: </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">)</span>
+  <span class="nv">tour: </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">TourView</span><span class="p">(</span><span class="nv">collection: </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">tour</span><span class="p">)</span>
+
+<span class="nv">Reddish.router = </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Router</span><span class="p">()</span>
+
+<span class="nv">first_ready = </span><span class="kc">true</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nf">(err) -&gt;</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="nx">err</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">fetch</span><span class="p">()</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:ready&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="k">return</span> <span class="nx">unless</span> <span class="nx">first_ready</span>
+
+  <span class="nv">first_ready = </span><span class="kc">false</span>
+
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:command&#39;</span><span class="p">,</span> <span class="nv">command = </span><span class="s">&#39;KEYS&#39;</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+      <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">err</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+      <span class="k">return</span>
+
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">reply</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;info&#39;</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:reset:vals&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">.</span><span class="nx">reset</span><span class="p">()</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:reset:keys&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">reset</span><span class="p">(</span><span class="nv">info = id: </span><span class="s">&#39;INFO&#39;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="nv">val_cmd_name: </span><span class="s">&#39;INFO&#39;</span><span class="p">,</span> <span class="nv">val_cmd_str: </span><span class="s">&#39;INFO&#39;</span><span class="p">)</span>
+
+<span class="nv">handle_disconnect = </span><span class="o">-&gt;</span>
+  <span class="nv">first_ready = </span><span class="kc">true</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">reset</span><span class="p">()</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">.</span><span class="nx">reset</span><span class="p">()</span>
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">forEach</span> <span class="nf">(model) -&gt;</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">state: </span><span class="s">&#39;disconnected&#39;</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;disconnect&#39;</span><span class="p">,</span> <span class="nx">handle_disconnect</span>
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:end&#39;</span><span class="p">,</span> <span class="nx">handle_disconnect</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:key&#39;</span><span class="p">,</span> <span class="nf">(key) -&gt;</span>
+  <span class="k">if</span> <span class="nv">model = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+    <span class="nv">key.deleted = </span><span class="kc">false</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="nv">silent: </span><span class="kc">true</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="k">return</span>
+
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:key:remove&#39;</span><span class="p">,</span> <span class="nf">(key) -&gt;</span>
+  <span class="k">if</span> <span class="nv">model = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">deleted: </span><span class="kc">true</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:val&#39;</span><span class="p">,</span> <span class="nf">(val) -&gt;</span>
+  <span class="k">if</span> <span class="nv">model = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="nv">silent: </span><span class="kc">true</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+    <span class="k">return</span>
+
+  <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+
+<span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;redis:val:remove&#39;</span><span class="p">,</span> <span class="nf">(val) -&gt;</span>
+  <span class="k">if</span> <span class="nv">model = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">vals</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">deleted: </span><span class="kc">true</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

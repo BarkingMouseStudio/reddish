@@ -1,0 +1,63 @@
+<!DOCTYPE html>  <html> <head>   <title>init.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">
+<a class="source" href="main.html">main.coffee</a>
+<a class="source" href="init.html">init.coffee</a>
+<a class="source" href="router.html">router.coffee</a>
+<a class="source" href="utils.html">utils.coffee</a>
+<a class="source" href="models/connections.html">models/connections.coffee</a>
+<a class="source" href="models/keys.html">models/keys.coffee</a>
+<a class="source" href="models/messages.html">models/messages.coffee</a>
+<a class="source" href="models/tour.html">models/tour.coffee</a>
+<a class="source" href="models/vals.html">models/vals.coffee</a>
+<a class="source" href="views/cli.html">views/cli.coffee</a>
+<a class="source" href="views/connection.html">views/connection.coffee</a>
+<a class="source" href="views/connections.html">views/connections.coffee</a>
+<a class="source" href="views/key.html">views/key.coffee</a>
+<a class="source" href="views/keys.html">views/keys.coffee</a>
+<a class="source" href="views/message.html">views/message.coffee</a>
+<a class="source" href="views/tour.html">views/tour.coffee</a>
+<a class="source" href="views/val.html">views/val.coffee</a>
+<a class="source" href="views/vals.html">views/vals.coffee</a>  
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               init.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Initialize the tour</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">tour</span><span class="p">.</span><span class="nx">reset</span><span class="p">([</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;&lt;strong&gt;Welcome to Reddish!&lt;/strong&gt; Click &lt;strong&gt;next&lt;/strong&gt; to start the tour.&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-welcome&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;In Reddish there are two types of &lt;strong&gt;connections&lt;/strong&gt; for redis stores...&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-connections&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#connections&#39;</span><span class="p">,</span>
+    <span class="nv">callback: </span><span class="o">-&gt;</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">show</span><span class="p">()</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;&lt;strong&gt;Connections&lt;/strong&gt; to public instances can be created using a redis url (e.g. &quot;redis://my_domain_name&quot;)...&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-connections&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#connections&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;&lt;strong&gt;Connections&lt;/strong&gt; to local instances can be created using the &lt;a href=&quot;https://github.com/FreeFlow/reddish-proxy&quot; target=&quot;_blank&quot;&gt;reddish-proxy&lt;/a&gt; tool. Just enter a string name like &amp;quot;Test&amp;quot;...&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-connections&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#connections&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;If your instance uses a &lt;strong&gt;password&lt;/strong&gt; you can either enter it in the url (e.g. &quot;redis://:my_password@my_domain_name&quot;)&lt;br&gt; or check the password checkbox so it won\&#39;t be stored on our servers (but you\&#39;ll need to enter it each time you connect).&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-connections&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#connections&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;The &lt;strong&gt;keys&lt;/strong&gt; panel displays a list of keys available in the current database.&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-keys&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#keys&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;The &lt;strong&gt;values&lt;/strong&gt; panel displays a list of values on the selected key.&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-vals&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#values&#39;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nv">message: </span><span class="s">&#39;The &lt;strong&gt;CLI&lt;/strong&gt; allows entering arbitrary commands.&#39;</span><span class="p">,</span>
+    <span class="nv">className: </span><span class="s">&#39;tour tour-cli&#39;</span><span class="p">,</span>
+    <span class="nv">focusSelector: </span><span class="s">&#39;#cli&#39;</span>
+  <span class="p">}</span>
+<span class="p">])</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Initialize the router</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
