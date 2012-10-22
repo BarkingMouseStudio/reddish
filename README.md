@@ -53,7 +53,6 @@ Options you can modify in the `config.json` file installed with reddish:
               folder should contain an `index.js` that exports the loaded
               certificate files that Express2 expects:
 
-              ```
               // index.js
               var fs = require('fs');
 
@@ -62,10 +61,9 @@ Options you can modify in the `config.json` file installed with reddish:
                 cert: fs.readFileSync(__dirname + '/certificate.cert').toString(),
                 ca: fs.readFileSync(__dirname + '/certificate.ca').toString()
               }
-              ```
 
 
-              Default: `false`
+    Default: `false`
 
   * `redis_auth`: Password to use when connecting to the local redis instance.
                   Default: `false`
