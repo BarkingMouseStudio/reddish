@@ -1,0 +1,70 @@
+<!DOCTYPE html>  <html> <head>   <title>utils.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">
+<a class="source" href="main.html">main.coffee</a>
+<a class="source" href="init.html">init.coffee</a>
+<a class="source" href="router.html">router.coffee</a>
+<a class="source" href="utils.html">utils.coffee</a>
+<a class="source" href="models/connections.html">models/connections.coffee</a>
+<a class="source" href="models/keys.html">models/keys.coffee</a>
+<a class="source" href="models/messages.html">models/messages.coffee</a>
+<a class="source" href="models/tour.html">models/tour.coffee</a>
+<a class="source" href="models/vals.html">models/vals.coffee</a>
+<a class="source" href="views/cli.html">views/cli.coffee</a>
+<a class="source" href="views/connection.html">views/connection.coffee</a>
+<a class="source" href="views/connections.html">views/connections.coffee</a>
+<a class="source" href="views/key.html">views/key.coffee</a>
+<a class="source" href="views/keys.html">views/keys.coffee</a>
+<a class="source" href="views/message.html">views/message.coffee</a>
+<a class="source" href="views/tour.html">views/tour.coffee</a>
+<a class="source" href="views/val.html">views/val.coffee</a>
+<a class="source" href="views/vals.html">views/vals.coffee</a>  
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               utils.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.utils =</span>
+
+  <span class="nv">escapeValue: </span><span class="nf">(value) -&gt;</span>
+    <span class="k">return</span> <span class="s">&#39;(nil)&#39;</span> <span class="nx">unless</span> <span class="nx">value</span>
+    <span class="k">try</span> <span class="nv">value = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">value</span><span class="p">),</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="nv">value = </span><span class="nx">value</span><span class="o">?</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&lt;/g</span><span class="p">,</span> <span class="s">&#39;&amp;lt;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&gt;/g</span><span class="p">,</span> <span class="s">&#39;&amp;gt;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">value</span>
+
+
+  <span class="nv">timeSpan: </span><span class="nf">(span) -&gt;</span>
+    <span class="nv">units = </span><span class="kc">null</span>
+
+    <span class="nv">conversions =</span>
+      <span class="nv">millisecond : </span><span class="mi">1</span>    <span class="c1"># ms    -&gt; ms</span>
+      <span class="nv">second      : </span><span class="mi">1000</span> <span class="c1"># ms    -&gt; sec</span>
+      <span class="nv">minute      : </span><span class="mi">60</span>   <span class="c1"># sec   -&gt; min</span>
+      <span class="nv">hour        : </span><span class="mi">60</span>   <span class="c1"># min   -&gt; hour</span>
+      <span class="nv">day         : </span><span class="mi">24</span>   <span class="c1"># hour  -&gt; day</span>
+      <span class="nv">month       : </span><span class="mi">30</span>   <span class="c1"># day   -&gt; month (roughly)</span>
+      <span class="nv">year        : </span><span class="mi">12</span>   <span class="c1"># month -&gt; year</span>
+
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">conversions</span>
+      <span class="k">break</span> <span class="k">if</span> <span class="nx">span</span> <span class="o">&lt;</span> <span class="nx">value</span>
+
+      <span class="nv">units = </span><span class="nx">key</span> <span class="c1"># keeps track of the selected key over the iteration</span>
+      <span class="nv">span = </span><span class="nx">span</span> <span class="o">/</span> <span class="nx">value</span> <span class="c1">#/</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>pluralize a unit when the difference is greater than 1</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">span = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">span</span><span class="p">)</span>
+    <span class="nx">units</span> <span class="o">+=</span> <span class="s">&#39;s&#39;</span> <span class="k">if</span> <span class="nx">span</span> <span class="o">isnt</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nx">span</span><span class="p">,</span> <span class="nx">units</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+
+
+  <span class="nv">relativeTime: </span><span class="p">(</span><span class="nv">date = </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span> <span class="nv">now_threshold = </span><span class="mi">1000</span><span class="p">,</span> <span class="nv">past_tense = </span><span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">past_tense</span>
+      <span class="nv">tense = </span><span class="s">&#39;ago&#39;</span>
+      <span class="nv">delta = </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">date</span>
+    <span class="k">else</span>
+      <span class="nv">tense = </span><span class="s">&#39;from now&#39;</span>
+      <span class="nv">delta = </span><span class="nx">date</span> <span class="o">-</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
+
+    <span class="nv">now_threshold = </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">now_threshold</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="nv">now_threshold = </span><span class="mi">0</span> <span class="k">if</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">now_threshold</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s">&#39;just now&#39;</span> <span class="k">if</span> <span class="nx">delta</span> <span class="o">&lt;=</span> <span class="nx">now_threshold</span>
+
+    <span class="nv">timespan = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">utils</span><span class="p">.</span><span class="nx">timeSpan</span><span class="p">(</span><span class="nx">delta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nx">timespan</span><span class="p">,</span> <span class="nx">tense</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

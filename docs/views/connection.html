@@ -1,0 +1,90 @@
+<!DOCTYPE html>  <html> <head>   <title>connection.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="../docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">
+<a class="source" href="../main.html">main.coffee</a>
+<a class="source" href="../init.html">init.coffee</a>
+<a class="source" href="../router.html">router.coffee</a>
+<a class="source" href="../utils.html">utils.coffee</a>  
+<a class="source" href="../models/connections.html">models/connections.coffee</a>
+<a class="source" href="../models/keys.html">models/keys.coffee</a>
+<a class="source" href="../models/messages.html">models/messages.coffee</a>
+<a class="source" href="../models/tour.html">models/tour.coffee</a>
+<a class="source" href="../models/vals.html">models/vals.coffee</a>
+<a class="source" href="cli.html">views/cli.coffee</a>
+<a class="source" href="connection.html">views/connection.coffee</a>
+<a class="source" href="connections.html">views/connections.coffee</a>
+<a class="source" href="key.html">views/key.coffee</a>
+<a class="source" href="keys.html">views/keys.coffee</a>
+<a class="source" href="message.html">views/message.coffee</a>
+<a class="source" href="tour.html">views/tour.coffee</a>
+<a class="source" href="val.html">views/val.coffee</a>
+<a class="source" href="vals.html">views/vals.coffee</a>      
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               connection.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.ConnectionView = </span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;click a.remove&#39;</span><span class="o">:</span> <span class="s">&#39;destroy&#39;</span>
+    <span class="s">&#39;click a.connect&#39;</span><span class="o">:</span> <span class="s">&#39;connect&#39;</span>
+    <span class="s">&#39;click a.disconnect&#39;</span><span class="o">:</span> <span class="s">&#39;disconnect&#39;</span>
+
+  <span class="nv">tagName: </span><span class="s">&#39;li&#39;</span>
+
+  <span class="nv">template: </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#connection-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@render</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;destroy&#39;</span><span class="p">,</span> <span class="nx">@close</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="vi">@$el = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@el</span><span class="p">)</span>
+
+  <span class="nv">connect: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;state&#39;</span><span class="p">)</span> <span class="o">isnt</span> <span class="s">&#39;disconnected&#39;</span>
+
+    <span class="nv">model_json = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
+
+    <span class="p">{</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">requires_pass</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span>
+
+    <span class="nv">model_json.password = </span><span class="nx">@$password</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">is</span> <span class="s">&#39;url&#39;</span> <span class="o">and</span> <span class="nx">requires_pass</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.button&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;disconnect&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;connecting&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;Connecting...&#39;</span><span class="p">)</span>
+
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">state: </span><span class="s">&#39;connecting&#39;</span><span class="p">)</span>
+
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:connect&#39;</span><span class="p">,</span> <span class="nx">model_json</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">unless</span> <span class="nx">reply</span>
+        <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">state: </span><span class="s">&#39;disconnected&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">state: </span><span class="s">&#39;connected&#39;</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.button&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;connecting&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;disconnect&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;Disconnect&#39;</span><span class="p">)</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;connected&#39;</span><span class="p">)</span>
+
+  <span class="nv">close: </span><span class="o">-&gt;</span>
+    <span class="nx">@remove</span><span class="p">()</span>
+    <span class="nx">@unbind</span><span class="p">()</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">unbind</span><span class="p">()</span>
+
+  <span class="nv">disconnect: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:disconnect&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">state: </span><span class="s">&#39;disconnected&#39;</span><span class="p">)</span> <span class="nx">unless</span> <span class="nx">reply</span>
+
+  <span class="nv">destroy: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">unless</span> <span class="nx">confirm</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">      Are you sure you want to remove this connection?</span>
+<span class="s">      &quot;&quot;&quot;</span>
+    <span class="nx">@model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="vi">@el.innerHTML = </span><span class="nx">@template</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">())</span>
+    <span class="vi">@$password = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;input.password&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">this</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

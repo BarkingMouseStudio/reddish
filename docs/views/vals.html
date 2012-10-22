@@ -1,0 +1,138 @@
+<!DOCTYPE html>  <html> <head>   <title>vals.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="../docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">  
+<a class="source" href="../main.html">main.coffee</a>
+<a class="source" href="../init.html">init.coffee</a>
+<a class="source" href="../router.html">router.coffee</a>
+<a class="source" href="../utils.html">utils.coffee</a>  
+<a class="source" href="../models/connections.html">models/connections.coffee</a>
+<a class="source" href="../models/keys.html">models/keys.coffee</a>
+<a class="source" href="../models/messages.html">models/messages.coffee</a>
+<a class="source" href="../models/tour.html">models/tour.coffee</a>
+<a class="source" href="../models/vals.html">models/vals.coffee</a>
+<a class="source" href="cli.html">views/cli.coffee</a>
+<a class="source" href="connection.html">views/connection.coffee</a>
+<a class="source" href="connections.html">views/connections.coffee</a>
+<a class="source" href="key.html">views/key.coffee</a>
+<a class="source" href="keys.html">views/keys.coffee</a>
+<a class="source" href="message.html">views/message.coffee</a>
+<a class="source" href="tour.html">views/tour.coffee</a>
+<a class="source" href="val.html">views/val.coffee</a>
+<a class="source" href="vals.html">views/vals.coffee</a>    
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               vals.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.ValuesView = </span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span>
+
+  <span class="nv">el: </span><span class="s">&#39;#values&#39;</span>
+
+  <span class="nv">initialize: </span><span class="o">-&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&#39;add&#39;</span><span class="p">,</span> <span class="s">&#39;resize&#39;</span><span class="p">,</span> <span class="s">&#39;scroll&#39;</span><span class="p">)</span>
+
+    <span class="nx">@collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;add&#39;</span><span class="p">,</span> <span class="nx">@add</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;reset&#39;</span><span class="p">,</span> <span class="nx">@reset</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="nx">@collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s">&#39;remove&#39;</span><span class="p">,</span> <span class="nx">@remove</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+
+    <span class="vi">@$el = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@el</span><span class="p">)</span>
+    <span class="vi">@$wrapper = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;#values-list-wrapper&#39;</span><span class="p">)</span>
+    <span class="vi">@$values = </span><span class="nx">@$wrapper</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;#values-list&#39;</span><span class="p">)</span>
+    <span class="vi">@$empty = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;#values-empty&#39;</span><span class="p">)</span>
+
+    <span class="nx">@$wrapper</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;scroll&#39;</span><span class="p">,</span> <span class="nx">@scroll</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="kc">on</span> <span class="s">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">@resize</span>
+
+    <span class="vi">@currScroll = @prevScroll = </span><span class="mi">0</span>
+    <span class="vi">@startIndex = @prevStartIndex = </span><span class="mi">0</span>
+
+    <span class="vi">@height = </span><span class="mi">0</span>
+    <span class="vi">@minItemHeight = </span><span class="mi">92</span>
+
+    <span class="vi">@wrapperHeight = </span><span class="nx">@$wrapper</span><span class="p">.</span><span class="nx">outerHeight</span><span class="p">()</span>
+    <span class="vi">@visibleItems = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span> <span class="nx">@wrapperHeight</span> <span class="o">/</span> <span class="nx">@minItemHeight</span>
+    <span class="vi">@endIndex = @prevEndIndex = @bufferSize = </span><span class="nx">@visibleItems</span> <span class="o">*</span> <span class="mi">3</span>
+
+    <span class="vi">@views = </span><span class="p">{}</span>
+
+  <span class="nv">resize: </span><span class="nx">_</span><span class="p">.</span><span class="nx">debounce</span> <span class="o">-&gt;</span>
+    <span class="vi">@wrapperHeight = </span><span class="nx">@$wrapper</span><span class="p">.</span><span class="nx">outerHeight</span><span class="p">()</span>
+    <span class="vi">@visibleItems = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span> <span class="nx">@wrapperHeight</span> <span class="o">/</span> <span class="nx">@minItemHeight</span>
+    <span class="vi">@bufferSize = </span><span class="nx">@visibleItems</span> <span class="o">*</span> <span class="mi">3</span>
+  <span class="p">,</span> <span class="mi">250</span>
+
+  <span class="nv">scroll: </span><span class="nx">_</span><span class="p">.</span><span class="nx">throttle</span> <span class="o">-&gt;</span>
+    <span class="vi">@currScroll = </span><span class="nx">@$wrapper</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">@currScroll</span> <span class="o">&gt;</span> <span class="nx">@prevScroll</span>
+      <span class="nv">direction = </span><span class="s">&#39;down&#39;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">@currScroll</span> <span class="o">&lt;</span> <span class="nx">@prevScroll</span>
+      <span class="nv">direction = </span><span class="s">&#39;up&#39;</span>
+    <span class="k">else</span> <span class="k">return</span>
+
+    <span class="vi">@prevStartIndex = </span><span class="nx">@startIndex</span>
+    <span class="vi">@prevEndIndex = </span><span class="nx">@endIndex</span>
+
+    <span class="nv">model = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">find</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">return</span> <span class="nv">top = </span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">@currScroll</span>
+    <span class="nv">index = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span>
+
+    <span class="vi">@startIndex = </span><span class="nx">index</span> <span class="o">-</span> <span class="nx">@visibleItems</span>
+    <span class="vi">@startIndex = </span><span class="mi">0</span> <span class="k">if</span> <span class="nx">@startIndex</span> <span class="o">&lt;</span> <span class="mi">0</span>
+
+    <span class="vi">@endIndex = </span><span class="nx">@startIndex</span> <span class="o">+</span> <span class="nx">@bufferSize</span>
+
+    <span class="k">if</span> <span class="nx">direction</span> <span class="o">is</span> <span class="s">&#39;down&#39;</span>
+      <span class="nv">start_render_range = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">@prevEndIndex</span><span class="p">,</span> <span class="nx">@startIndex</span><span class="p">)</span>
+      <span class="nv">end_render_range = </span><span class="nx">@endIndex</span>
+
+      <span class="nv">start_remove_range = </span><span class="nx">@prevStartIndex</span>
+      <span class="nv">end_remove_range = </span><span class="nx">@startIndex</span>
+    <span class="k">else</span>
+      <span class="nv">start_render_range = </span><span class="nx">@startIndex</span>
+      <span class="nv">end_render_range = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">@prevStartIndex</span><span class="p">,</span> <span class="nx">@endIndex</span><span class="p">)</span>
+
+      <span class="nv">start_remove_range = </span><span class="nx">@endIndex</span>
+      <span class="nv">end_remove_range = </span><span class="nx">@prevEndIndex</span>
+
+    <span class="nv">render_models = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">start_render_range</span><span class="p">,</span> <span class="nx">end_render_range</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">model</span> <span class="k">of</span> <span class="nx">render_models</span>
+      <span class="nx">@render</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">start_render_range</span> <span class="o">+</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+
+    <span class="nv">remove_models = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">start_remove_range</span><span class="p">,</span> <span class="nx">end_remove_range</span><span class="p">)</span>
+    <span class="nx">@remove</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="k">for</span> <span class="nx">model</span> <span class="k">in</span> <span class="nx">remove_models</span>
+
+    <span class="vi">@prevScroll = </span><span class="nx">@currScroll</span>
+  <span class="p">,</span> <span class="mi">250</span>
+
+  <span class="nv">add: </span><span class="nf">(model) -&gt;</span>
+    <span class="nv">index = </span><span class="nx">@collection</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="nx">@startIndex</span> <span class="o">&lt;=</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">@endIndex</span>
+      <span class="nx">@render</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span>
+
+    <span class="nx">@$empty</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="nf">(model) -&gt;</span>
+    <span class="nv">view = </span><span class="k">new</span> <span class="nx">Reddish</span><span class="p">.</span><span class="nx">ValueView</span><span class="p">(</span><span class="nv">model: </span><span class="nx">model</span><span class="p">,</span> <span class="nv">collection: </span><span class="nx">@collection</span><span class="p">)</span>
+    <span class="nx">@views</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span> <span class="o">=</span> <span class="nx">view</span>
+
+    <span class="nv">el = </span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span>
+    <span class="nx">@$values</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>only do this the first time its rendered</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">unless</span> <span class="nx">model</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+      <span class="nv">$el = </span><span class="nx">view</span><span class="p">.</span><span class="nx">$el</span>
+      <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nv">top: top = </span><span class="nx">@height</span><span class="p">)</span>
+      <span class="nx">@height</span> <span class="o">+=</span> <span class="nx">$el</span><span class="p">.</span><span class="nx">outerHeight</span><span class="p">()</span>
+      <span class="nx">@$values</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="nv">height: </span><span class="nx">@height</span><span class="p">)</span>
+
+    <span class="nv">el.style.top = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">px&quot;</span>
+
+  <span class="nv">remove: </span><span class="nf">(model) -&gt;</span>
+    <span class="nv">view = </span><span class="nx">@views</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span>
+    <span class="nx">view</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+    <span class="k">delete</span> <span class="nx">@views</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span>
+
+  <span class="nv">reset: </span><span class="o">-&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">@views</span><span class="p">,</span> <span class="nf">(view) -&gt;</span>
+      <span class="nx">view</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+
+    <span class="nx">@$values</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="nv">height: </span><span class="vi">@height = </span><span class="mi">0</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h1>#</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@collection</span><span class="p">.</span><span class="nx">length</span>
+      <span class="nx">@$empty</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="nx">@$empty</span><span class="p">.</span><span class="nx">show</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>#</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@collection</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">@add</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

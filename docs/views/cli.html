@@ -1,0 +1,203 @@
+<!DOCTYPE html>  <html> <head>   <title>cli.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="../docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">
+<a class="source" href="../main.html">main.coffee</a>
+<a class="source" href="../init.html">init.coffee</a>
+<a class="source" href="../router.html">router.coffee</a>
+<a class="source" href="../utils.html">utils.coffee</a>  
+<a class="source" href="../models/connections.html">models/connections.coffee</a>
+<a class="source" href="../models/keys.html">models/keys.coffee</a>
+<a class="source" href="../models/messages.html">models/messages.coffee</a>
+<a class="source" href="../models/tour.html">models/tour.coffee</a>
+<a class="source" href="../models/vals.html">models/vals.coffee</a>
+<a class="source" href="cli.html">views/cli.coffee</a>
+<a class="source" href="connection.html">views/connection.coffee</a>
+<a class="source" href="connections.html">views/connections.coffee</a>
+<a class="source" href="key.html">views/key.coffee</a>
+<a class="source" href="keys.html">views/keys.coffee</a>
+<a class="source" href="message.html">views/message.coffee</a>
+<a class="source" href="tour.html">views/tour.coffee</a>
+<a class="source" href="val.html">views/val.coffee</a>
+<a class="source" href="vals.html">views/vals.coffee</a>    
+</div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               cli.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">Reddish</span> <span class="o">or=</span> <span class="p">{}</span>
+
+<span class="nv">Reddish.CLIView = </span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span>
+
+  <span class="nv">el: </span><span class="s">&#39;#cli&#39;</span>
+
+  <span class="nv">trim_regex: </span><span class="sr">/^\s+|\s+$/g</span>
+  <span class="nv">trim_quotes_regex: </span><span class="sr">/^([&quot;&#39;])(.*?)\1$/g</span>
+  <span class="nv">token_regex: </span><span class="sr">/^([&quot;&#39;]).*\1\s+$|^[^&quot;&#39;].*\s+$/</span>
+  <span class="nv">config_regex: </span><span class="sr">/^CONFIG\s$/i</span>
+  <span class="nv">tokenize_regex: </span><span class="sr">/([&quot;&#39;])(?:\\\1|.)*?[^\\]\1|\S+/g</span> <span class="c1"># use for paste</span>
+
+  <span class="nv">template: </span><span class="nx">_</span><span class="p">.</span><span class="nx">template</span> <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#tag-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+
+  <span class="nv">events:</span>
+    <span class="s">&#39;keydown input.text&#39;</span><span class="o">:</span> <span class="s">&#39;keyDown&#39;</span>
+    <span class="s">&#39;keyup input.text&#39;</span><span class="o">:</span> <span class="s">&#39;keyUp&#39;</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@$el = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@el</span><span class="p">)</span>
+
+    <span class="vi">@$tags = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;ul.tags&#39;</span><span class="p">)</span>
+    <span class="vi">@$last = </span><span class="nx">@$tags</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;li:last-child&#39;</span><span class="p">)</span>
+    <span class="vi">@$label = </span><span class="nx">@$last</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.label&#39;</span><span class="p">)</span>
+    <span class="vi">@$input = </span><span class="nx">@$last</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;input&#39;</span><span class="p">)</span>
+    <span class="vi">@$tip = </span><span class="nx">@$el</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;.tip&#39;</span><span class="p">)</span>
+
+    <span class="vi">@tags = </span><span class="p">[]</span>
+    <span class="vi">@history = </span><span class="p">[]</span>
+    <span class="vi">@index = </span><span class="mi">0</span>
+
+  <span class="nv">keyDown: </span><span class="nf">(e) -&gt;</span>
+    <span class="p">{</span> <span class="nx">keyCode</span><span class="p">,</span> <span class="nx">target</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">e</span>
+    <span class="nv">value = </span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>if they backspaced (8: backspace)</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="nx">unless</span> <span class="nx">keyCode</span> <span class="o">is</span> <span class="mi">8</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">and</span> <span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>cancel keyUp to prevent removing last character of new value</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+
+    <span class="nx">@$tags</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;li&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">remove</span><span class="p">()</span>
+
+    <span class="nv">target.value = </span><span class="nx">@tags</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+
+    <span class="p">[</span><span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">...]</span> <span class="o">=</span> <span class="nx">@tags</span>
+
+    <span class="k">if</span> <span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span>
+      <span class="nv">command = </span><span class="nx">command</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>
+      <span class="nv">command_description = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">commands</span><span class="p">[</span><span class="nx">command</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="nx">command_description</span>
+        <span class="p">{</span> <span class="nv">arguments: </span><span class="nx">expected_args</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">command_description</span>
+        <span class="p">[</span><span class="nx">prev_label</span><span class="p">,</span> <span class="nx">optional</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get_arg_label</span><span class="p">(</span><span class="nx">expected_args</span><span class="p">,</span> <span class="nv">arg_index = </span><span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$tip</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+      <span class="nv">prev_label = </span><span class="s">&#39;command&#39;</span>
+
+    <span class="nx">prev_label</span> <span class="o">or=</span> <span class="s">&#39;?&#39;</span>
+    <span class="nx">@$label</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="k">if</span> <span class="nx">optional</span> <span class="k">then</span> <span class="s">&quot;(</span><span class="si">#{</span><span class="nx">prev_label</span><span class="si">}</span><span class="s">)&quot;</span> <span class="k">else</span> <span class="nx">prev_label</span><span class="p">)</span>
+
+  <span class="nv">parse: </span><span class="nf">(value) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>check that <code>value</code> either has opening and closing quotes
+or no leading quotes and has whitespace
+and remove trailing and leading whitespace</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="kc">false</span> <span class="nx">unless</span> <span class="nx">@token_regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">@config_regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">and</span> <span class="nv">value = </span><span class="nx">value</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">@trim_regex</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="nx">@tags</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">[</span><span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">...]</span> <span class="o">=</span> <span class="nx">@tags</span>
+
+    <span class="nv">command = </span><span class="nx">command</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>
+    <span class="nv">command_description = </span><span class="nx">Reddish</span><span class="p">.</span><span class="nx">commands</span><span class="p">[</span><span class="nx">command</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nx">command_description</span>
+      <span class="p">{</span> <span class="nx">summary</span><span class="p">,</span> <span class="nv">arguments: </span><span class="nx">expected_args</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">command_description</span>
+
+      <span class="nv">tags_length = </span><span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span>
+
+      <span class="k">if</span> <span class="nx">@tags</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">1</span>
+        <span class="nx">@$tip</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">summary</span><span class="p">)</span>
+        <span class="nv">value = </span><span class="nx">command</span>
+        <span class="nv">label = </span><span class="s">&#39;command&#39;</span>
+
+        <span class="k">if</span> <span class="nx">expected_args</span> <span class="o">and</span> <span class="nx">expected_args</span><span class="p">.</span><span class="nx">length</span>
+          <span class="p">[</span><span class="nx">next_label</span><span class="p">,</span> <span class="nx">next_optional</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get_arg_label</span><span class="p">(</span><span class="nx">expected_args</span><span class="p">,</span> <span class="nv">arg_index = </span><span class="nx">tags_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">if</span> <span class="nx">expected_args</span> <span class="o">and</span> <span class="nx">expected_args</span><span class="p">.</span><span class="nx">length</span>
+          <span class="p">[</span><span class="nx">next_label</span><span class="p">,</span> <span class="nx">next_optional</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get_arg_label</span><span class="p">(</span><span class="nx">expected_args</span><span class="p">,</span> <span class="nv">arg_index = </span><span class="nx">tags_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="p">[</span><span class="nx">label</span><span class="p">,</span> <span class="nx">optional</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get_arg_label</span><span class="p">(</span><span class="nx">expected_args</span><span class="p">,</span> <span class="nv">arg_index = </span><span class="nx">tags_length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nx">@$tip</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;ERR Invalid command&#39;</span><span class="p">)</span>
+      <span class="nv">label = next_label = </span><span class="s">&#39;?&#39;</span>
+
+    <span class="nx">@$label</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="k">if</span> <span class="nx">next_optional</span> <span class="k">then</span> <span class="s">&quot;(</span><span class="si">#{</span><span class="nx">next_label</span><span class="si">}</span><span class="s">)&quot;</span> <span class="k">else</span> <span class="nx">next_label</span> <span class="o">or</span> <span class="s">&#39;?&#39;</span><span class="p">)</span>
+    <span class="nx">@render_tag</span><span class="p">(</span><span class="nv">value: </span><span class="nx">value</span><span class="p">,</span> <span class="nv">label: </span><span class="nx">label</span> <span class="o">or</span> <span class="s">&#39;?&#39;</span><span class="p">,</span> <span class="nv">optional: </span><span class="nx">optional</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">true</span>
+
+  <span class="nv">keyUp: </span><span class="nf">(e) -&gt;</span>
+    <span class="p">{</span> <span class="nx">keyCode</span><span class="p">,</span> <span class="nx">target</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">e</span>
+
+    <span class="nv">value = </span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span>
+    <span class="nx">value</span> <span class="o">+=</span> <span class="s">&#39; &#39;</span> <span class="k">if</span> <span class="nx">keyCode</span> <span class="o">is</span> <span class="mi">13</span>
+
+    <span class="k">if</span> <span class="nx">keyCode</span> <span class="o">is</span> <span class="mi">38</span> <span class="c1"># UP</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+      <span class="nx">@reset</span><span class="p">()</span>
+      <span class="nx">@index</span><span class="o">--</span>
+      <span class="vi">@index = </span><span class="nx">@history</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="nx">@index</span> <span class="o">&lt;</span> <span class="mi">0</span>
+      <span class="nv">history = </span><span class="nx">@history</span><span class="p">[</span><span class="nx">@index</span><span class="p">]</span>
+      <span class="k">for</span> <span class="nx">val</span> <span class="k">in</span> <span class="nx">history</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">@tokenize_regex</span><span class="p">)</span>
+        <span class="nx">@parse</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">val</span><span class="si">}</span><span class="s"> &quot;</span><span class="p">)</span>
+      <span class="k">return</span>
+
+    <span class="k">if</span> <span class="nx">keyCode</span> <span class="o">is</span> <span class="mi">40</span> <span class="c1"># DOWN</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+      <span class="nx">@reset</span><span class="p">()</span>
+      <span class="nx">@index</span><span class="o">++</span>
+      <span class="nx">@index</span> <span class="o">%=</span> <span class="nx">@history</span><span class="p">.</span><span class="nx">length</span>
+      <span class="nv">history = </span><span class="nx">@history</span><span class="p">[</span><span class="nx">@index</span><span class="p">]</span>
+      <span class="k">for</span> <span class="nx">val</span> <span class="k">in</span> <span class="nx">history</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">@tokenize_regex</span><span class="p">)</span>
+        <span class="nx">@parse</span><span class="p">(</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">val</span><span class="si">}</span><span class="s"> &quot;</span><span class="p">)</span>
+      <span class="k">return</span>
+
+    <span class="nv">has_parsed = </span><span class="nx">@parse</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>clear input</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">target.value = </span><span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="nx">has_parsed</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>handle submit (13: enter)</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@submit</span><span class="p">()</span> <span class="k">if</span> <span class="nx">keyCode</span> <span class="o">is</span> <span class="mi">13</span> 
+
+  <span class="nv">submit: </span><span class="o">-&gt;</span>
+    <span class="vi">@index = </span><span class="mi">0</span>
+
+    <span class="p">[</span><span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">...]</span> <span class="o">=</span> <span class="nx">@tags</span>
+
+    <span class="nv">args = </span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">args</span><span class="p">,</span> <span class="nf">(arg) -&gt;</span>
+      <span class="nx">arg</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">@trim_quotes_regex</span><span class="p">,</span> <span class="s">&#39;$2&#39;</span><span class="p">)</span>
+
+    <span class="nx">Reddish</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&#39;reddish:command&#39;</span><span class="p">,</span> <span class="nx">command</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">err</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+      <span class="nx">Reddish</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nv">message: </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">command</span><span class="si">}</span><span class="s">: </span><span class="si">#{</span><span class="nx">reply</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">type: </span><span class="s">&#39;info&#39;</span><span class="p">)</span>
+
+      <span class="nx">@history</span><span class="p">.</span><span class="nx">push</span> <span class="nx">@tags</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+      <span class="nx">@reset</span><span class="p">()</span>
+
+  <span class="nv">reset: </span><span class="o">-&gt;</span>
+    <span class="vi">@tags = </span><span class="p">[]</span>
+    <span class="nx">@$tags</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="s">&#39;li:not(:last)&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+    <span class="nx">@$tip</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="nx">@$input</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="nx">@$label</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s">&#39;command&#39;</span><span class="p">)</span>
+
+  <span class="nv">render_tag: </span><span class="nf">(tag) -&gt;</span>
+    <span class="nx">@$last</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">@template</span><span class="p">(</span><span class="nx">tag</span><span class="p">))</span>
+
+  <span class="nv">get_arg_label: </span><span class="nf">(expected_args, arg_index) -&gt;</span>
+    <span class="nv">max_arg_index = </span><span class="nx">expected_args</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="nx">arg_index</span> <span class="o">&gt;</span> <span class="nx">max_arg_index</span>
+      <span class="nv">expected_arg = </span><span class="nx">expected_args</span><span class="p">[</span><span class="nx">max_arg_index</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="nx">expected_arg</span> <span class="o">and</span> <span class="nx">expected_arg</span><span class="p">.</span><span class="nx">multiple</span>
+        <span class="nv">names = </span><span class="nx">expected_arg</span><span class="p">.</span><span class="nx">name</span>
+
+        <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">names</span><span class="p">)</span>
+          <span class="nv">sub_index = </span><span class="p">(</span><span class="nx">arg_index</span> <span class="o">-</span> <span class="nx">max_arg_index</span><span class="p">)</span> <span class="o">%</span> <span class="nx">names</span><span class="p">.</span><span class="nx">length</span>
+          <span class="nv">label = </span><span class="nx">names</span><span class="p">[</span><span class="nx">sub_index</span><span class="p">]</span>
+        <span class="k">else</span>
+          <span class="nv">label = </span><span class="nx">names</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">arg_index</span> <span class="o">is</span> <span class="nx">max_arg_index</span>
+      <span class="nv">expected_arg = </span><span class="nx">expected_args</span><span class="p">[</span><span class="nx">max_arg_index</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="nx">expected_arg</span>
+        <span class="nv">names = </span><span class="nx">expected_arg</span><span class="p">.</span><span class="nx">name</span>
+
+        <span class="k">if</span> <span class="nx">expected_arg</span><span class="p">.</span><span class="nx">multiple</span> <span class="o">and</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">names</span><span class="p">)</span>
+          <span class="nv">sub_index = </span><span class="p">(</span><span class="nx">arg_index</span> <span class="o">-</span> <span class="nx">max_arg_index</span><span class="p">)</span> <span class="o">%</span> <span class="nx">names</span><span class="p">.</span><span class="nx">length</span>
+          <span class="nv">label = </span><span class="nx">names</span><span class="p">[</span><span class="nx">sub_index</span><span class="p">]</span>
+        <span class="k">else</span>
+          <span class="nv">label = </span><span class="nx">names</span>
+    <span class="k">else</span>
+      <span class="nv">expected_arg = </span><span class="nx">expected_args</span><span class="p">[</span><span class="nx">arg_index</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="nx">expected_arg</span>
+        <span class="nv">label = </span><span class="nx">expected_arg</span><span class="p">.</span><span class="nx">name</span>
+
+    <span class="nv">optional = </span><span class="o">!!</span><span class="nx">expected_arg</span><span class="p">.</span><span class="nx">optional</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nx">label</span><span class="p">,</span> <span class="nx">optional</span><span class="p">]</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
