@@ -100,7 +100,7 @@
     return new Client(socket);
   });
 
-  Endpoint = require('./lib/Endpoint');
+  Endpoint = require('./lib/endpoint');
 
   standard_endpoint_port = endpoint_ports[0], monitor_endpoint_port = endpoint_ports[1];
 
