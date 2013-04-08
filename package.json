@@ -2,7 +2,7 @@
   "name": "reddish",
   "description": "GUI for Redis",
   "keywords": [ "redis", "reddish", "proxy" ],
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "start": "node app.js"
   },
