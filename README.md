@@ -61,6 +61,10 @@ Options you can modify in the `config.json` file installed with reddish:
   * `redis_auth`: Password to use when connecting to the local redis instance.
                   Default: `false`
 
+  * `redis_host`, `redis_port`: Connection details to use when connecting to
+                                the local redis instance.
+                                Default: `127.0.0.1`, `6379` (respectively)
+
 
 Proxying
 --------
